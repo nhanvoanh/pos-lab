@@ -1,6 +1,6 @@
 # Cấu hình chạy của pos-gateway ở môi trường lab. Người sửa.
 # Tương ứng ở công ty: repo projects-values, branch pos/pos-gateway, file qc-helm.yaml
-replicaCount: 3
+replicaCount: 2
 
 env:
   APP_ENV: lab
