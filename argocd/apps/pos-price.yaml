@@ -1,0 +1,27 @@
+# Một Application = một service. ArgoCD chạy "helm template" với đúng ba thứ
+# anh vẫn truyền bằng tay: chart, file config, file image.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pos-price
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # xoá Application thì xoá luôn pod của nó
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:nhanvoanh/pos-lab.git
+    targetRevision: main
+    path: charts/go-backend
+    helm:
+      releaseName: pos-price
+      valueFiles:
+        - ../../config/pos-price/lab-helm.yaml
+        - ../../image/pos-price/lab-helm.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pos-lab
+  syncPolicy:
+    automated:
+      prune: true      # thứ gì bị xoá khỏi Git thì xoá khỏi cluster
+      selfHeal: true   # ai sửa tay trên cluster thì kéo về lại như Git

@@ -1,0 +1,20 @@
+# Application gốc: trông coi thư mục argocd/apps. Thêm một file vào đó rồi push
+# là có service mới. Đây là thứ DUY NHẤT phải kubectl apply bằng tay, một lần.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pos-lab-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:nhanvoanh/pos-lab.git
+    targetRevision: main
+    path: argocd/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
