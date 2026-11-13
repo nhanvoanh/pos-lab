@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pos-gateway
+  namespace: pos-lab
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: pos-gateway }
+  template:
+    metadata:
+      labels: { app: pos-gateway }
+    spec:
+      containers:
+        - name: pos-gateway
+          image: pos-gateway:v2
+          ports:
+            - containerPort: 3000
+          env:
+            - name: APP_ENV
+              value: lab
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { cpu: 150m, memory: 64Mi }
+          readinessProbe:
+            httpGet: { path: /health-check, port: 3000 }
+          livenessProbe:
+            httpGet: { path: /health-check, port: 3000 }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pos-gateway
+  namespace: pos-lab
+spec:
+  selector: { app: pos-gateway }
+  ports:
+    - port: 80
+      targetPort: 3000

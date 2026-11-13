@@ -1,0 +1,5 @@
+apiVersion: v2
+name: go-backend
+description: Chart dùng chung cho mọi service backend (bản thu nhỏ của go-backend-v2)
+type: application
+version: 0.1.0

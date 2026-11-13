@@ -1,0 +1,4 @@
+image:
+  repository: pos-gateway
+  tag: v2
+fullnameOverride: pos-price

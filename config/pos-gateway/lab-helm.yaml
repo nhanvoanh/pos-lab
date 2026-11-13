@@ -1,0 +1,12 @@
+# Cấu hình chạy của pos-gateway ở môi trường lab. Người sửa.
+# Tương ứng ở công ty: repo projects-values, branch pos/pos-gateway, file qc-helm.yaml
+replicaCount: 3
+
+env:
+  APP_ENV: lab
+
+resources:
+  requests: { cpu: 50m, memory: 32Mi }
+  limits: { cpu: 150m, memory: 64Mi }
+
+secretName: pos-gateway-env

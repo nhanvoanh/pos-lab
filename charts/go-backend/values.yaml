@@ -1,0 +1,29 @@
+# Giá trị mặc định. Mỗi service ghi đè bằng file riêng của nó.
+fullnameOverride: ""        # tên service, bắt buộc phải truyền vào
+
+image:
+  repository: ""
+  tag: ""
+
+replicaCount: 1
+containerPort: 3000
+
+env: {}                     # biến môi trường dạng TÊN: giá-trị
+
+# Tên một Secret trong cùng namespace. Mọi khoá trong Secret thành biến môi trường.
+# Giá trị bí mật KHÔNG nằm ở đây và không nằm trong Git, chỉ có cái tên.
+secretName: ""
+
+resources:
+  requests: { cpu: 50m, memory: 32Mi }
+  limits: { cpu: 150m, memory: 64Mi }
+
+healthCheckPath: /health-check
+
+service:
+  port: 80
+
+ingress:
+  enabled: false
+  className: traefik
+  host: ""
