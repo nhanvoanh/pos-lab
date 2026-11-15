@@ -5,6 +5,9 @@ image:
   repository: ""
   tag: ""
 
+# Secret chứa tài khoản đọc registry riêng (ở công ty là harbor-registry).
+imagePullSecrets: []
+
 replicaCount: 1
 containerPort: 3000
 

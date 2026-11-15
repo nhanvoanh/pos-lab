@@ -1,0 +1,68 @@
+# CI cho pos-gateway. Làm đúng ba việc Jenkins làm ở công ty:
+#   1. build image   2. đẩy lên registry   3. ghi tag mới vào Git
+# CI KHÔNG chạm vào cluster. Việc deploy là của ArgoCD.
+name: pos-gateway
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pos-gateway/**"
+      - ".github/workflows/pos-gateway.yaml"
+  workflow_dispatch: {}        # cho phép bấm chạy tay trên tab Actions
+
+permissions:
+  contents: write              # để commit file image/pos-gateway/lab-helm.yaml
+  packages: write              # để đẩy image lên ghcr.io
+
+concurrency:
+  group: pos-gateway           # hai lần push sát nhau thì chạy lần lượt
+  cancel-in-progress: false
+
+env:
+  SERVICE: pos-gateway
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy code
+        uses: actions/checkout@v4
+
+      - name: Đặt tên image và tag
+        run: |
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "IMAGE=ghcr.io/${OWNER}/${SERVICE}" >> "$GITHUB_ENV"
+          # Cùng dạng với công ty: <môi trường>.<yyMMddHHmm>.<7 ký tự commit>
+          echo "TAG=lab.$(TZ=Asia/Ho_Chi_Minh date +%y%m%d%H%M).${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Chuẩn bị buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Đăng nhập ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build và đẩy image
+        uses: docker/build-push-action@v6
+        with:
+          context: pos-gateway
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE }}:${{ env.TAG }}
+          build-args: |
+            VERSION=${{ env.TAG }}
+
+      - name: Ghi tag mới vào Git
+        run: |
+          FILE="image/${SERVICE}/lab-helm.yaml"
+          yq -i '.image.repository = strenv(IMAGE) | .image.tag = strenv(TAG)' "$FILE"
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add "$FILE"
+          git commit -m "Update image ${SERVICE} with tag ${TAG}"
+          git pull --rebase origin main
+          git push origin HEAD:main
