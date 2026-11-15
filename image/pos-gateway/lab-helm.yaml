@@ -2,5 +2,5 @@
 # Tương ứng ở công ty: repo helm-app, branch pos/pos-gateway, file qc-helm.yaml
 image:
   repository: ghcr.io/nhanvoanh/pos-gateway
-  tag: lab.2611150849.a795a98
+  tag: lab.2611150855.ef79b45
 fullnameOverride: pos-gateway
