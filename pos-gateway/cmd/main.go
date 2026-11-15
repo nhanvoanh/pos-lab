@@ -24,7 +24,7 @@ func main() {
 		log.Printf("%s %s", r.Method, r.URL.Path)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
-			"service": "pos-gateway",
+			"service": "pos-gateway-lab",
 			"version": version,
 			"env":     os.Getenv("APP_ENV"),
 			"pod":     hostname,
