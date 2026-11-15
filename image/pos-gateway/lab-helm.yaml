@@ -1,6 +1,6 @@
 # Image đang chạy của pos-gateway ở môi trường lab. Sau này CI tự ghi file này.
 # Tương ứng ở công ty: repo helm-app, branch pos/pos-gateway, file qc-helm.yaml
 image:
-  repository: pos-gateway
-  tag: v3
+  repository: ghcr.io/nhanvoanh/pos-gateway
+  tag: lab.2611150849.a795a98
 fullnameOverride: pos-gateway
